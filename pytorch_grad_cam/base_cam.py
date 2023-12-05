@@ -52,7 +52,13 @@ class BaseCAM:
                                        targets,
                                        activations,
                                        grads)
-        weighted_activations = weights[:, :, None, None] * activations
+        
+        if len(activations.shape) == 4:
+            weighted_activations = weights[:, :, None, None] * activations
+        elif len(activations.shape) == 3:
+            weighted_activations = weights[:, None, None] * activations
+        else:
+            raise Exception("Unsupported shape for activations: " + activations.shape)
         if eigen_smooth:
             cam = get_2d_projection(weighted_activations)
         else:
